@@ -35,9 +35,10 @@ fun readBitmapFromFile(assetManager: AssetManager, filePath: String): Bitmap {
     var inputStream: InputStream? = null
     try {
         inputStream = assetManager.open(filePath)
+        val bitmap = BitmapFactory.decodeStream(inputStream)
+        return bitmap
     }finally {
         inputStream?.close()
     }
-    return BitmapFactory.decodeStream(inputStream)
 }
 

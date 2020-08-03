@@ -18,8 +18,10 @@ set_target_properties(tnn PROPERTIES IMPORTED_LOCATION
         ${TNN_ROOT}/${ANDROID_ABI}/libTNN.so )
 
 add_library(demo
-    SHARED
-     src/main/jni/demo_jni.cpp
+        SHARED
+        src/main/jni/demo_jni.cpp
+        src/main/jni/UltraFace.cpp
+        src/main/jni/helper_jni.cc
      )
 
 find_library(log-lib log)
