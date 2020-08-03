@@ -11,4 +11,6 @@
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="test_image">test image</string>
     <string name="detect_faces">DETECT FACES</string>
+    <string name="camera">Camera</string>
+    <string name="bitmap">Bitmap</string>
 </resources>

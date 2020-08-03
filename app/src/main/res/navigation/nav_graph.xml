@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/nav_graph"
+    app:startDestination="@id/detectBitmapFragment">
+
+    <fragment
+        android:id="@+id/detectBitmapFragment"
+        android:name="com.lk.tnndemo.DetectBitmapFragment"
+        android:label="DetectBitmapFragment" />
+    <fragment
+        android:id="@+id/cameraDetectFragment"
+        android:name="com.lk.tnndemo.CameraDetectFragment"
+        android:label="CameraDetectFragment" />
+</navigation>

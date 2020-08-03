@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+    <item android:id="@+id/cameraDetectFragment"
+        android:title="@string/camera"
+        app:showAsAction="ifRoom"
+        android:orderInCategory="1"
+        android:icon="@android:drawable/ic_menu_camera"/>
+
+    <item android:id="@+id/detectBitmapFragment"
+        android:title="@string/bitmap"
+        app:showAsAction="always"
+        android:orderInCategory="2"
+        android:icon="@android:drawable/ic_menu_gallery"/>
+
+</menu>
