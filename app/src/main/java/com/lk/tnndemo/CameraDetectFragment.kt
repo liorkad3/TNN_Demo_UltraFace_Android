@@ -6,7 +6,6 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
-import android.util.Size
 import android.view.LayoutInflater
 import android.view.OrientationEventListener
 import android.view.View
@@ -18,9 +17,10 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.fragment_camera_detect.*
+import java.io.IOException
 import java.util.concurrent.Executors
 
-class CameraDetectFragment: Fragment() {
+class CameraDetectFragment: Fragment(), DetectFaceAnalyzer.FaceAnalyzerHost{
     companion object{
         const val LENS_FACING = CameraSelector.LENS_FACING_BACK
         private const val TAG = "CameraDetectFragment"
@@ -35,6 +35,7 @@ class CameraDetectFragment: Fragment() {
     private var camera: Camera? = null
 
     private var screenOrientation = 0
+    private var modelPath = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,6 +48,7 @@ class CameraDetectFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initOrientationListener(requireContext())
+        modelPath = initModel()
         // Request camera permissions
         if (allPermissionsGranted()) {
             viewFinder.post{startCamera()}
@@ -55,6 +57,23 @@ class CameraDetectFragment: Fragment() {
                 requireActivity(), REQUIRED_PERMISSIONS, RC_PERMS)
         }
 
+    }
+
+    @Throws(IOException::class)
+    private fun initModel(): String {
+        val activity = requireActivity()
+        val targetDir: String = activity.filesDir.absolutePath
+
+        //copy detect model to sdcard
+        val modelPathsDetector = arrayOf(
+            "version-slim-320_simplified.tnnmodel",
+            "version-slim-320_simplified.tnnproto"
+        )
+        for (modelPath in modelPathsDetector) {
+            val interModelFilePath = "$targetDir/$modelPath"
+            copyAsset(activity.assets, modelPath, interModelFilePath)
+        }
+        return targetDir
     }
 
 
@@ -81,7 +100,7 @@ class CameraDetectFragment: Fragment() {
 //                .setTargetResolution(imageResolutionSize)
                 .build()
                 .also {
-                    it.setAnalyzer(cameraExecutor, DetectFaceAnalyzer())
+                    it.setAnalyzer(cameraExecutor, DetectFaceAnalyzer(modelPath, this))
                 }
 
             val cameraSelector = CameraSelector.Builder()
@@ -161,5 +180,9 @@ class CameraDetectFragment: Fragment() {
             ActivityCompat.requestPermissions(
                 requireActivity(), REQUIRED_PERMISSIONS, RC_PERMS)
         }
+    }
+
+    override fun getScreenOrientation(): Int {
+        return screenOrientation
     }
 }

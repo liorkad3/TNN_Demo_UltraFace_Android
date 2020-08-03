@@ -13,6 +13,10 @@ class UltraFace(modelPath: String, width: Int, height: Int, computeType: Int) {
         return detectFromImage(netAddress, bitmap, bitmap.width, bitmap.height)
     }
 
+    fun detect(yuvBytes: ByteArray, width: Int, height: Int, rotate: Int): Array<FaceInfo>?{
+        return detectFromStream(netAddress, yuvBytes, width, height, rotate)
+    }
+
     external fun init(
         modelPath: String,
         width: Int,
@@ -22,6 +26,7 @@ class UltraFace(modelPath: String, width: Int, height: Int, computeType: Int) {
 
     external fun deinit(netAddress: Long): Int
     external fun detectFromStream(
+        netAddress: Long,
         yuv420sp: ByteArray,
         width: Int,
         height: Int,
