@@ -27,10 +27,13 @@ class DetectFaceAnalyzer(private val modelPath: String, private val analyzerHost
                 analyzerHost.getScreenOrientation())
             val yuvBytes = getYuvBytes(imageProxy)
             
-//            val facesInfo = ultraFace?.detect(yuvBytes, imageProxy.width,
-//                imageProxy.height, rotation)
-            
-            
+            val facesInfo = ultraFace?.detect(yuvBytes, imageProxy.width,
+                imageProxy.height, rotation)
+
+            facesInfo?.let { faces->
+                Log.d(TAG, "startDetection: result-size = ${faces.size}")
+            }
+
             isDetecting.set(false)
         }
         imageProxy.close()
