@@ -18,7 +18,7 @@ class DetectFaceAnalyzer(private val modelPath: String, private val analyzerHost
 
 
     override fun analyze(imageProxy: ImageProxy) {
-        Log.d(TAG, "analyze: image-size: ${imageProxy.width}x${imageProxy.height}")
+//        Log.d(TAG, "analyze: image-size: ${imageProxy.width}x${imageProxy.height}")
         if (ultraFace == null)
             ultraFace = UltraFace(modelPath, imageProxy.width, imageProxy.height, COMPUTE)
 
@@ -28,7 +28,7 @@ class DetectFaceAnalyzer(private val modelPath: String, private val analyzerHost
             val yuvBytes = getYuvBytes(imageProxy)
             
             val facesInfo = ultraFace?.detect(yuvBytes, imageProxy.width,
-                imageProxy.height, rotation)
+                imageProxy.height, 0)
 
             facesInfo?.let { faces->
                 Log.d(TAG, "startDetection: result-size = ${faces.size}")
@@ -42,19 +42,30 @@ class DetectFaceAnalyzer(private val modelPath: String, private val analyzerHost
     private fun getImageRotation(sensor: Int, screen: Int): Int{
         var rotation = (sensor - screen) % 360
         if (rotation < 0)
-            rotation = 360 - rotation
+            rotation += 360
+        Log.d(TAG, "getImageRotation: sensor=$sensor, screen=$screen, rotation=$rotation")
         return rotation
     }
 
     private fun getYuvBytes(imageProxy: ImageProxy): ByteArray {
-        val bufferSize = (imageProxy.width * imageProxy.height * (3f/2f)).toInt()
+
         val planes = imageProxy.planes
         val y = planes[0]
         val u = planes[1]
+        val v = planes[2]
 
-        Log.d(TAG, "getYuvBytes: planes-size: y = ${y.buffer.remaining()}, u = ${u.buffer.remaining()}")
-        val yuvBuffer = ByteBuffer.allocate(bufferSize).put(y.buffer).put(u.buffer)
-        return yuvBuffer.array()
+        val ySize = y.buffer.remaining()
+        val uSize = u.buffer.remaining()
+        val vSize = v.buffer.remaining()
+
+        val bufferSize = (ySize + uSize + vSize)
+        val byteArray = ByteArray(bufferSize)
+//        val yuvBuffer = ByteBuffer.allocate(bufferSize).put(y.buffer).put(u.buffer)
+        y.buffer.get(byteArray, 0, ySize)
+//        u.buffer.get(byteArray, ySize, uSize)
+        v.buffer.get(byteArray, ySize, vSize)
+        Log.d(TAG, "getYuvBytes: bufferSize = ${byteArray.size}")
+        return byteArray
     }
 
     interface FaceAnalyzerHost{
